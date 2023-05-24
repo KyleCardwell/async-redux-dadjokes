@@ -1,12 +1,12 @@
 import React, { useState, useReducer } from 'react';
-import titleReducer from '../reducers/titleReducer';
-import { TOGGLE_EDITING, UPDATE_TITLE } from '../actions/titleActions';
-import actions from '../actions/titleActions'
+import titleReducer, { initialState } from '../reducers/titleReducer';
+import {updateTitle, toggleEditing} from '../actions/titleActions'
+import { connect } from 'react-redux';
 
-const Title = () => {
+const Title = (props) => {
 
   
-  const initialState = {title: "Hello Reducer Earthlings!", editing: false}
+  
   const [state, dispatch] = useReducer(titleReducer, initialState)
 
   
@@ -18,10 +18,10 @@ const Title = () => {
 
   return (
     <div>
-      {!state.editing ? (
+      {!props.editing ? (
         <h1>
-          {state.title}{' '}
-          <i onClick={() => dispatch(actions.toggleEditing())} className="far fa-edit" />
+          {props.title}{' '}
+          <i onClick={() => props.toggleEditing()} className="far fa-edit" />
         </h1>
       ) : (
         <div>
@@ -32,7 +32,7 @@ const Title = () => {
             value={newTitleText}
             onChange={handleChanges}
           />
-          <button onClick={() => dispatch(actions.updateTitle(newTitleText))}>
+          <button onClick={() => props.updateTitle(newTitleText)}>
             Update title
           </button>
         </div>
@@ -41,4 +41,19 @@ const Title = () => {
   );
 };
 
-export default Title;
+// Redux Step 3: Connect Comonents
+
+const mapStateToProps = (state) => {
+  return {
+    editing: state.editing,
+    title: state.title
+  }
+}
+
+const mapDispatchToProps = {
+    updateTitle,
+    toggleEditing
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Title);
